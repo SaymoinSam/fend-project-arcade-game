@@ -31,12 +31,32 @@ const playGround = [
   ["grass","grass","grass","grass","grass"]
 ];
 
+const units = [
+  ["","","","",""],
+  ["","key","","rock",""],
+  ["gemBlue","gemOrange","gemGreen","",""],
+  ["star","heart","","",""],
+  ["","rock","rock","",""],
+  ["","","","",""]
+];
+
 const gameBlocks = [];
 
 function drawPlayGround() {
   for(let x = 0;x < 6; x++) {
     for(let y = 0;y < 5; y++) {
-      gameBlocks.push(new Block(y , x, playGround[x][y]));
+      gameBlocks.push(new Block(y, x, playGround[x][y]));
+    }
+  }
+}
+
+function drawUnits() {
+  for(let x = 0;x < units.length; x++) {
+    for(let y = 0; y < units[x].length; y++) {
+      const unit = units[x][y];
+      if(unit) {
+        gameBlocks.push(new Block(y, x, unit));
+      }
     }
   }
 }
@@ -47,6 +67,7 @@ class Block {
     this.y = col * 80;
     this.image = gameImages[obj];
     this.draw();
+    this.class = obj;
   }
 }
 
@@ -68,7 +89,12 @@ Block.prototype.draw = function() {
   ctx.drawImage(this.image, this.x - xStart, this.y - yStart, xLong, yLong);
 }
 
+drawPlayGround();
+drawUnits();
+
 setInterval(function() {
-  drawPlayGround();
+  gameBlocks.forEach(function(block) {
+    block.draw();
+  });
 }, 30);
 
