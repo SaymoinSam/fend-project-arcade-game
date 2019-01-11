@@ -119,6 +119,15 @@ Block.prototype.checkWater = function() {
   });
 }
 
+function moveUnit(direction) {
+  switch(direction) {
+    case "left": this.x -= 100; break;
+    case "up": this.y -= 80; break;
+    case "right": this.x += 100; break;
+    case "down": this.y += 80;
+  }
+}
+
 class Enemy extends Block {
   constructor(x, y, speed, direction) {
     super(x, y, direction === "left" ? "reversedEnemy" : "enemy", speed);
@@ -165,14 +174,15 @@ const player = new Block(1, 5, "player");
 gameBlocks.push(player);
 player.move = function (direction) {
   if(this.canMove(direction)) {
-    switch(direction) {
-      case "left": this.x -= 100; break;
-      case "up": this.y -= 80; break;
-      case "right": this.x += 100; break;
-      case "down": this.y += 80;
-    }
+    moveUnit.call(this, direction);
   }
-  player.checkWater();
+  gameBlocks.forEach(block => {
+    if(block.class === "rock" && block.equalsAnother(player) &&
+      this.canMove.call(block, direction)) {
+        moveUnit.call(block, direction);
+    }
+  });
+  this.checkWater();
 }
 
 player.canMove = function(direction) {
