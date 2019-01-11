@@ -48,7 +48,9 @@ const enemies = [
 
 const gameBlocks = [];
 
-function drawPlayGround() {
+controls = {37: "left", 38: "up", 39: "right", 40: "down"};
+
+function createPlayGround() {
   for(let x = 0;x < 6; x++) {
     for(let y = 0;y < 5; y++) {
       gameBlocks.push(new Block(y, x, playGround[x][y]));
@@ -56,7 +58,7 @@ function drawPlayGround() {
   }
 }
 
-function drawUnits() {
+function createUnits() {
   for(let x = 0;x < units.length; x++) {
     for(let y = 0; y < units[x].length; y++) {
       const unit = units[x][y];
@@ -99,8 +101,28 @@ Block.prototype.draw = function() {
   ctx.drawImage(this.image, this.x - xStart, this.y - yStart, xLong, yLong);
 }
 
-drawPlayGround();
-drawUnits();
+document.body.onkeyup = function(e) {
+  switch(e.keyCode) {
+    case 37: case 38: case 39: case 40:
+      move.call(player, controls[e.keyCode]);
+    default: console.log(e.keyCode);
+  }
+}
+
+function move(direction) {
+  switch(direction) {
+    case "left": player.x -= 100; break;
+    case "up": player.y -= 80; break;
+    case "right": player.x += 100; break;
+    case "down": player.y += 80;
+  }
+}
+
+createPlayGround();
+createUnits();
+
+const player = new Block(1, 5, "player");
+gameBlocks.push(player);
 
 setInterval(function() {
   gameBlocks.forEach(function(block) {
