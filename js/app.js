@@ -25,8 +25,8 @@ const gameImages = {
 
 const playGround = [
   ["water","water","water","water","water"],
-  ["stone","stone","stone","stone","stone"],
-  ["stone","stone","stone","stone","stone"],
+  ["stone","stone","water","stone","stone"],
+  ["stone","stone","water","stone","stone"],
   ["stone","stone","stone","stone","stone"],
   ["grass","grass","grass","grass","grass"],
   ["grass","grass","grass","grass","grass"]
@@ -140,6 +140,20 @@ Enemy.prototype.move = function() {
   if(this.hasHitSomething(player)) {
     console.log("player is dead!");
     player.resetPosition();
+  }else {
+    gameBlocks.forEach(block => {
+      if((block.class === "rock" || block.class === "water") && this.hasHitSomething(block)) {
+        this.speed = -this.speed;
+        if(this.class === "enemy") {
+          this.image = loadImage("img/enemy-bug-reverse.png");
+          this.class = "reversedEnemy";
+        }else {
+          this.image = loadImage("img/enemy-bug.png");
+          this.class = "enemy";
+        }
+        console.log("enemy has hit a rock");
+      }
+    });
   }
   if(this.direction === "left") {
     this.x -= this.speed;
