@@ -40,6 +40,12 @@ const units = [
   ["","","","",""]
 ];
 
+const enemies = [
+  [4, 1],
+  [1, 2],
+  [1, 3]
+];
+
 const gameBlocks = [];
 
 function drawPlayGround() {
@@ -59,6 +65,10 @@ function drawUnits() {
       }
     }
   }
+
+  enemies.forEach(function(enemy){
+    gameBlocks.push(new Block(enemy[0], enemy[1], "enemy"));
+  });
 }
 
 class Block {
