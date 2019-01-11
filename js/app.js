@@ -10,6 +10,7 @@ function loadImage(src) {
 const gameImages = {
   player: loadImage("img/char-boy.png"),
   enemy: loadImage("img/enemy-bug.png"),
+  reversedEnemy: loadImage("img/enemy-bug-reverse.png"),
   rock: loadImage("img/rock.png"),
   grass: loadImage("img/grass-block.png"),
   stone: loadImage("img/stone-block.png"),
@@ -41,12 +42,13 @@ const units = [
 ];
 
 const enemies = [
-  [4, 1],
-  [1, 2],
-  [1, 3]
+  [4, 1, 2, "left"],
+  [1, 2, 5],
+  [1, 3, 8, "left"]
 ];
 
 const gameBlocks = [];
+const gameEnemies = [];
 
 controls = {37: "left", 38: "up", 39: "right", 40: "down"};
 
@@ -69,7 +71,9 @@ function createUnits() {
   }
 
   enemies.forEach(function(enemy){
-    gameBlocks.push(new Block(enemy[0], enemy[1], "enemy"));
+    let anEnemy = new Enemy(...enemy);
+    gameBlocks.push(anEnemy);
+    gameEnemies.push(anEnemy);
   });
 }
 
@@ -90,7 +94,7 @@ Block.prototype.draw = function() {
     yLong = 171;
   switch(this.class) {
     case "player": yStart = 60; break;
-    case "enemy": yStart = 70; break;
+    case "enemy": case "reversedEnemy": yStart = 70; break;
     case "rock": yStart = 75; break;
     case "star": yStart = 60; break;
     case "heart": xStart = -15, yStart = 25, yLong = 120, xLong = 70; break;
@@ -101,20 +105,32 @@ Block.prototype.draw = function() {
   ctx.drawImage(this.image, this.x - xStart, this.y - yStart, xLong, yLong);
 }
 
-document.body.onkeyup = function(e) {
-  switch(e.keyCode) {
-    case 37: case 38: case 39: case 40:
-      move.call(player, controls[e.keyCode]);
-    default: console.log(e.keyCode);
+class Enemy extends Block {
+  constructor(x, y, speed, direction) {
+    super(x, y, direction === "left" ? "reversedEnemy" : "enemy", speed);
+    this.speed = speed;
+    this.direction = direction;
   }
 }
 
-function move(direction) {
-  switch(direction) {
-    case "left": player.x -= 100; break;
-    case "up": player.y -= 80; break;
-    case "right": player.x += 100; break;
-    case "down": player.y += 80;
+Enemy.prototype.move = function() {
+  if(this.direction === "left") {
+    this.x -= this.speed;
+  }else {
+    this.x += this.speed;
+  }
+  if(this.x >= 500) {
+    this.x = -100;
+  }else if(this.x <= -100) {
+    this.x = 500;
+  }
+}
+
+document.body.onkeyup = function(e) {
+  switch(e.keyCode) {
+    case 37: case 38: case 39: case 40:
+      player.move(controls[e.keyCode]);
+    default: console.log(e.keyCode);
   }
 }
 
@@ -122,11 +138,22 @@ createPlayGround();
 createUnits();
 
 const player = new Block(1, 5, "player");
+player.move = function (direction) {
+  switch(direction) {
+    case "left": player.x -= 100; break;
+    case "up": player.y -= 80; break;
+    case "right": player.x += 100; break;
+    case "down": player.y += 80;
+  }
+}
 gameBlocks.push(player);
 
 setInterval(function() {
   gameBlocks.forEach(function(block) {
     block.draw();
+  });
+  gameEnemies.forEach(function(enemy) {
+    enemy.move();
   });
 }, 30);
 
