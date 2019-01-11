@@ -173,13 +173,12 @@ createUnits();
 const player = new Block(1, 5, "player");
 gameBlocks.push(player);
 player.move = function (direction) {
-  if(this.canMove(direction)) {
+  if(this.canMove(direction) && this.canPushRock(direction)) {
     moveUnit.call(this, direction);
   }
   gameBlocks.forEach(block => {
-    if(block.class === "rock" && block.equalsAnother(player) &&
-      this.canMove.call(block, direction)) {
-        moveUnit.call(block, direction);
+    if(block.class === "rock" && block.equalsAnother(player) && this.canMove.call(block, direction)) {
+      moveUnit.call(block, direction);
     }
   });
   this.checkWater();
@@ -193,6 +192,24 @@ player.canMove = function(direction) {
       return false;
   }
   return true;
+}
+
+player.canPushRock = function(direction) {
+  let canMove = true;
+  gameBlocks.forEach(block => {
+    if(block.class === "rock" && !this.canMove.call(block, direction)) {
+      if(block.x - this.x === 100 && block.y === this.y && direction === "right") {
+        return canMove = false;
+      }else if(block.x - this.x === -100 && block.y === this.y && direction === "left") {
+        return canMove = false;
+      }else if(block.y - this.y === 80 && block.x === this.x && direction === "down") {
+        return canMove = false;
+      }else if(block.y - this.y === -80 && block.x === this.x && direction === "up") {
+        return canMove = false;
+      }
+    }
+  });
+  return canMove;
 }
 
 player.resetPosition = function() {
