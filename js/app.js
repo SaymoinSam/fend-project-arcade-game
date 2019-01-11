@@ -138,15 +138,28 @@ createPlayGround();
 createUnits();
 
 const player = new Block(1, 5, "player");
+gameBlocks.push(player);
 player.move = function (direction) {
-  switch(direction) {
-    case "left": player.x -= 100; break;
-    case "up": player.y -= 80; break;
-    case "right": player.x += 100; break;
-    case "down": player.y += 80;
+  if(this.canMove(direction)) {
+    switch(direction) {
+      case "left": this.x -= 100; break;
+      case "up": this.y -= 80; break;
+      case "right": this.x += 100; break;
+      case "down": this.y += 80;
+    }
+  }else {
+    console.log("no");
   }
 }
-gameBlocks.push(player);
+player.canMove = function(direction) {
+  if(this.x === 0 && direction === "left" ||
+    this.x === 400 && direction === "right" ||
+    this.y === 0 && direction === "up" ||
+    this.y === 400 && direction === "down") {
+      return false;
+  }
+  return true;
+}
 
 setInterval(function() {
   gameBlocks.forEach(function(block) {
