@@ -114,6 +114,10 @@ class Enemy extends Block {
 }
 
 Enemy.prototype.move = function() {
+  if(this.hasHitSomething(player)) {
+    console.log("player is dead!");
+    player.resetPosition();
+  }
   if(this.direction === "left") {
     this.x -= this.speed;
   }else {
@@ -124,6 +128,12 @@ Enemy.prototype.move = function() {
   }else if(this.x <= -100) {
     this.x = 500;
   }
+}
+
+Enemy.prototype.hasHitSomething = function(something) {
+  return this.x - something.x <= 80 &&
+         this.x - something.x >= -80 &&
+         this.y === something.y;
 }
 
 document.body.onkeyup = function(e) {
@@ -147,10 +157,9 @@ player.move = function (direction) {
       case "right": this.x += 100; break;
       case "down": this.y += 80;
     }
-  }else {
-    console.log("no");
   }
 }
+
 player.canMove = function(direction) {
   if(this.x === 0 && direction === "left" ||
     this.x === 400 && direction === "right" ||
@@ -159,6 +168,11 @@ player.canMove = function(direction) {
       return false;
   }
   return true;
+}
+
+player.resetPosition = function() {
+  player.x = 200;
+  player.y = 400;
 }
 
 setInterval(function() {
