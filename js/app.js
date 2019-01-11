@@ -105,6 +105,20 @@ Block.prototype.draw = function() {
   ctx.drawImage(this.image, this.x - xStart, this.y - yStart, xLong, yLong);
 }
 
+Block.prototype.equalsAnother = function(another) {
+  return this.x === another.x && this.y === another.y;
+}
+
+Block.prototype.checkWater = function() {
+  gameBlocks.forEach(function(block) {
+    if(block.class === "water" && block.equalsAnother(this)) {
+      if(this.class === "player") {
+        this.resetPosition();
+      }
+    }
+  });
+}
+
 class Enemy extends Block {
   constructor(x, y, speed, direction) {
     super(x, y, direction === "left" ? "reversedEnemy" : "enemy", speed);
@@ -158,6 +172,7 @@ player.move = function (direction) {
       case "down": this.y += 80;
     }
   }
+  player.checkWater();
 }
 
 player.canMove = function(direction) {
