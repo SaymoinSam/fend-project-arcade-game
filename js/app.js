@@ -26,8 +26,8 @@ const gameImages = {
 
 const playGround = [
   ["water","water","water","water","water"],
-  ["stone","stone","water","stone","stone"],
-  ["stone","stone","water","stone","stone"],
+  ["water","stone","stone","stone","stone"],
+  ["stone","stone","stone","stone","stone"],
   ["stone","stone","stone","stone","stone"],
   ["grass","grass","grass","grass","grass"],
   ["grass","grass","grass","grass","grass"]
@@ -43,9 +43,9 @@ const units = [
 ];
 
 const enemies = [
-  [4, 1, 2, "left"],
+  /*[4, 1, 2, "left"],
   [1, 2, 5],
-  [1, 3, 8, "left"]
+  [1, 3, 8, "left"]*/
 ];
 
 const gameBlocks = [];
@@ -125,6 +125,27 @@ Block.prototype.checkWater = function() {
       }
     }
   });
+}
+
+Block.prototype.getSiblings = function() {
+  let siblings = {left:{}, right:{}, up: {}, down: {}};
+  gameBlocks.forEach(block => {
+    if(block.class === "rock") {
+      if(this.x - block.x === 100 && this.y === block.y) {
+        siblings.left = block;
+      }
+      if(this.x - block.x === -100 && this.y === block.y) {
+        siblings.right = block;
+      }
+      if(this.y - block.y === 80 && this.x === block.x) {
+        siblings.up = block;
+      }
+      if(this.y - block.y === -80 && this.x === block.x) {
+        siblings.down = block;
+      }
+    }
+  });
+  return siblings;
 }
 
 function getWaterBlock(rockInWater) {
@@ -218,6 +239,20 @@ player.move = function (direction) {
 }
 
 player.canMove = function(direction) {
+  const siblings = this.getSiblings();
+  if(siblings.left.class === "rock" && this.getSiblings.call(siblings.left).left.class === "rock" && direction === "left") {
+    console.log("can't move left");
+    return false;
+  }else if(siblings.right.class === "rock" && this.getSiblings.call(siblings.right).right.class === "rock" && direction === "right") {
+    console.log("can't move right");
+    return false;
+  }else if(siblings.up.class === "rock" && this.getSiblings.call(siblings.up).up.class === "rock" && direction === "up") {
+    console.log("can't move up");
+    return false;
+  }else if(siblings.down.class === "rock" && this.getSiblings.call(siblings.down).down.class === "rock" && direction === "down") {
+    console.log("can't move down");
+    return false;
+  }
   if(this.x === 0 && direction === "left" ||
     this.x === 400 && direction === "right" ||
     this.y === 0 && direction === "up" ||
