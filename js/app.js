@@ -23,7 +23,9 @@ const gameImages = {
   gemOrange: loadImage("img/gem-orange.png"),
   key: loadImage("img/key.png"),
   heart: loadImage("img/heart.png"),
-  star: loadImage("img/star.png")
+  star: loadImage("img/star.png"),
+  closedTreasure: loadImage("img/closed-treasure.png"),
+  openedTreasure: loadImage("img/opened-treasure.png")
 };
 
 const playGround = [
@@ -40,8 +42,8 @@ const units = [
   ["","key","","rock",""],
   ["gemBlue","gemOrange","gemGreen","",""],
   ["star","heart","","",""],
-  ["","rock","rock","",""],
-  ["","","","",""]
+  ["","rock","rock","openedTreasure",""],
+  ["","","","","closedTreasure"]
 ];
 
 const enemies = [
@@ -102,6 +104,7 @@ Block.prototype.draw = function() {
     case "star": yStart = 60; break;
     case "heart": xStart = -15, yStart = 25, yLong = 120, xLong = 70; break;
     case "key": yStart = 40, yLong = 130; break;
+    case "closedTreasure": case "openedTreasure": xStart = 0, yStart = 10, yLong = 100, xLong = 100; break;
     case "gemBlue": case "gemGreen": case "gemOrange":
       xStart = -20, yStart = 10, xLong = 60 , yLong = 80;
   }
@@ -291,11 +294,11 @@ player.resetPosition = function() {
 }
 
 player.collectItem = function() {
-  const collectedItems = ["star", "key", "heart", "gemBlue", "gemOrange", "gemGreen"];
+  const collectedItems = ["star", "key", "heart", "gemBlue", "gemOrange", "gemGreen", "closedTreasure"];
   gameBlocks.forEach(block => {
     if(this.equalsAnother(block) && collectedItems.indexOf(block.class) > -1) {
       let collectedItem = block.class;
-      gameBlocks.splice(gameBlocks.indexOf(block), 1);
+      block.class === "closedTreasure" && checkTreasure(block) || gameBlocks.splice(gameBlocks.indexOf(block), 1);
       handleCollectedItem(collectedItem);
     }
   });
@@ -310,6 +313,18 @@ function handleCollectedItem(collectedItem) {
     case "key": player.hasKey = true; break;
     case "star": player.isInvincible = true; handleInvincibility();
   }
+}
+
+function checkTreasure(treasure) {
+  if(player.hasKey) {
+    treasure.image = loadImage("img/opened-treasure.png");
+    treasure.class = "openedTreasure";
+    player.x -= 100;
+    setTimeout(function() {
+      alert("You won");
+    }, 3000);
+  }
+  return true;
 }
 
 function updateMoney() {
