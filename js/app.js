@@ -1,5 +1,7 @@
 const  canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+let money = 0;
+let lives = 3;
 
 function loadImage(src) {
   const image = document.createElement("img");
@@ -43,9 +45,9 @@ const units = [
 ];
 
 const enemies = [
-  /*[4, 1, 2, "left"],
+  [4, 1, 2, "left"],
   [1, 2, 5],
-  [1, 3, 8, "left"]*/
+  [1, 3, 8, "left"]
 ];
 
 const gameBlocks = [];
@@ -94,7 +96,7 @@ Block.prototype.draw = function() {
     yStart = 50,
     yLong = 171;
   switch(this.class) {
-    case "player": yStart = 60; break;
+    case "player": case "superPlayer": yStart = 60; break;
     case "enemy": case "reversedEnemy": yStart = 70; break;
     case "rock": yStart = 75; break;
     case "star": yStart = 60; break;
@@ -176,8 +178,10 @@ class Enemy extends Block {
 }
 
 Enemy.prototype.move = function() {
-  if(this.hasHitSomething(player)) {
+  if(this.hasHitSomething(player) && !player.isInvincible) {
     console.log("player is dead!");
+    --lives === 0 && loseTheGame();
+    updateLives();
     player.resetPosition();
   }else {
     gameBlocks.forEach(block => {
@@ -292,8 +296,42 @@ player.collectItem = function() {
     if(this.equalsAnother(block) && collectedItems.indexOf(block.class) > -1) {
       let collectedItem = block.class;
       gameBlocks.splice(gameBlocks.indexOf(block), 1);
+      handleCollectedItem(collectedItem);
     }
   });
+}
+
+function handleCollectedItem(collectedItem) {
+  switch(collectedItem) {
+    case "gemGreen": money += 500; updateMoney(); break;
+    case "gemOrange": money += 800; updateMoney(); break;
+    case "gemBlue": money += 1000; updateMoney(); break;
+    case "heart": lives < 3 && (lives += 1); updateLives(); break;
+    case "key": player.hasKey = true; break;
+    case "star": player.isInvincible = true; handleInvincibility();
+  }
+}
+
+function updateMoney() {
+  document.querySelector(".player-money").children[0].innerHTML = money;
+}
+
+function updateLives() {
+  document.querySelector(".player-lives").innerHTML = '<img src="img/heart.png">\n'.repeat(lives);
+}
+
+function loseTheGame() {
+  alert("You lose!");
+}
+
+function handleInvincibility() {
+  player.class = "superPlayer";
+  player.image = loadImage("img/char-boy-super.png");
+  setTimeout(function() {
+    player.isInvincible = false;
+    player.class = "player";
+    player.image = loadImage("img/char-boy.png");
+  }, 3000);
 }
 
 setInterval(function() {
