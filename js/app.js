@@ -4,6 +4,7 @@ function play() {
   const ctx = canvas.getContext("2d");
   let money = 0;
   let lives = 3;
+  let level = 0;
 
   function loadImage(src) {
     const image = document.createElement("img");
@@ -11,7 +12,9 @@ function play() {
     return image;
   }
 
-  const gameImages = {
+  const game = {};
+
+  game.images = {
     player: loadImage("img/char-boy.png"),
     enemy: loadImage("img/enemy-bug.png"),
     reversedEnemy: loadImage("img/enemy-bug-reverse.png"),
@@ -26,33 +29,60 @@ function play() {
     key: loadImage("img/key.png"),
     heart: loadImage("img/heart.png"),
     star: loadImage("img/star.png"),
+    arrow: loadImage("img/arrow.png"),
     closedTreasure: loadImage("img/closed-treasure.png"),
     openedTreasure: loadImage("img/opened-treasure.png")
   };
 
-  const playGround = [
-    ["water","water","water","water","water"],
-    ["water","stone","stone","stone","stone"],
-    ["stone","stone","stone","stone","stone"],
-    ["stone","stone","stone","stone","stone"],
-    ["grass","grass","grass","grass","grass"],
-    ["grass","grass","grass","grass","grass"]
-  ];
+  const level1 = {
+    playGround: [
+      ["water","water","water","water","water"],
+      ["water","stone","stone","stone","stone"],
+      ["stone","stone","stone","stone","stone"],
+      ["stone","stone","stone","stone","stone"],
+      ["grass","grass","grass","grass","grass"],
+      ["grass","grass","grass","grass","grass"]
+    ],
+    units: [
+      ["","","","",""],
+      ["","key","","rock",""],
+      ["gemBlue","gemOrange","gemGreen","",""],
+      ["star","heart","","",""],
+      ["","rock","rock","openedTreasure",""],
+      ["","","","","closedTreasure"]
+    ],
+    enemies: [
+      [4, 1, 2, "left"],
+      [1, 2, 5],
+      [1, 3, 8, "left"]
+    ],
+    exit: 2
+  };
 
-  const units = [
-    ["","","","",""],
-    ["","key","","rock",""],
-    ["gemBlue","gemOrange","gemGreen","",""],
-    ["star","heart","","",""],
-    ["","rock","rock","openedTreasure",""],
-    ["","","","","closedTreasure"]
-  ];
+  const level2 = {
+    playGround: [
+      ["water","water","water","water","water"],
+      ["water","stone","stone","stone","stone"],
+      ["stone","stone","stone","stone","stone"],
+      ["stone","stone","stone","stone","stone"],
+      ["grass","grass","grass","grass","grass"],
+      ["grass","grass","grass","grass","grass"]
+    ],
+    units: [
+      ["","","","",""],
+      ["","key","","rock",""],
+      ["","","","",""],
+      ["star","heart","","",""],
+      ["","rock","rock","",""],
+      ["","","","",""]
+    ],
+    enemies: [
+      [4, 1, 2, "left"],
+      [1, 2, 5],
+    ],
+  };
 
-  const enemies = [
-    [4, 1, 2, "left"],
-    [1, 2, 5],
-    [1, 3, 8, "left"]
-  ];
+  game.levels = [level1, level2];
 
   const gameBlocks = [];
   const gameEnemies = [];
@@ -62,22 +92,24 @@ function play() {
   function createPlayGround() {
     for(let x = 0;x < 6; x++) {
       for(let y = 0;y < 5; y++) {
-        gameBlocks.push(new Block(y, x, playGround[x][y]));
+        gameBlocks.push(new Block(y, x, game.levels[level].playGround[x][y]));
       }
     }
   }
 
   function createUnits() {
-    for(let x = 0;x < units.length; x++) {
-      for(let y = 0; y < units[x].length; y++) {
-        const unit = units[x][y];
+    for(let x = 0;x < game.levels[level].units.length; x++) {
+      for(let y = 0; y < game.levels[level].units[x].length; y++) {
+        const unit = game.levels[level].units[x][y];
         if(unit) {
           gameBlocks.push(new Block(y, x, unit));
         }
       }
     }
 
-    enemies.forEach(function(enemy){
+    gameBlocks.push(new Block(game.levels[level].exit, 0, "arrow"));
+
+    game.levels[level].enemies.forEach(function(enemy){
       let anEnemy = new Enemy(...enemy);
       gameBlocks.push(anEnemy);
       gameEnemies.push(anEnemy);
@@ -88,7 +120,7 @@ function play() {
     constructor(row, col, obj) {
       this.x = row * 100;
       this.y = col * 80;
-      this.image = gameImages[obj];
+      this.image = game.images[obj];
       this.draw();
       this.class = obj;
     }
@@ -106,6 +138,7 @@ function play() {
       case "star": yStart = 60; break;
       case "heart": xStart = -15, yStart = 25, yLong = 120, xLong = 70; break;
       case "key": yStart = 40, yLong = 130; break;
+      case "arrow": xStart = -10, xLong = 80, yStart = -5, yLong = 70; break;
       case "closedTreasure": case "openedTreasure": xStart = 0, yStart = 10, yLong = 100, xLong = 100; break;
       case "gemBlue": case "gemGreen": case "gemOrange":
         xStart = -20, yStart = 10, xLong = 60 , yLong = 80;
@@ -239,6 +272,8 @@ function play() {
   player.move = function (direction) {
     if(this.canMove(direction) && this.canPushRock(direction)) {
       moveUnit.call(this, direction);
+    }else if(!this.canMove("up")) {
+      this.checkNextLevel();
     }
     this.collectItem();
     gameBlocks.forEach(block => {
@@ -306,6 +341,20 @@ function play() {
         handleCollectedItem(collectedItem);
       }
     });
+  }
+
+  player.checkNextLevel = function() {
+    if(this.y === 0 && (this.x - this.x % 100) / 100 === game.levels[level].exit) {
+      console.log("To the next level");
+      level++;
+      gameBlocks.splice(0);
+      gameEnemies.splice(0);
+      createPlayGround();
+      createUnits();
+      gameBlocks.push(player);
+      player.y = 400;
+      document.querySelector(".player-level").children[0].innerHTML = level + 1;
+    }
   }
 
   function handleCollectedItem(collectedItem) {
