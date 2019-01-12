@@ -5,6 +5,8 @@ function play() {
   let money = 0;
   let lives = 3;
   let level = 0;
+  let isPaused = false;
+  let running = setInterval(runTheGame, 30);
 
   function loadImage(src) {
     const image = document.createElement("img");
@@ -257,10 +259,16 @@ function play() {
   }
 
   document.body.onkeyup = function(e) {
-    switch(e.keyCode) {
-      case 37: case 38: case 39: case 40:
-        player.move(controls[e.keyCode]);
-      default: console.log(e.keyCode);
+    if(isPaused) {
+      e.keyCode === 80 && togglePause();
+    }else {
+      switch(e.keyCode) {
+        case 37: case 38: case 39: case 40:
+          player.move(controls[e.keyCode]); break;
+        case 80: togglePause(); break;
+        case 82: restart(); break;
+        default: console.log(e.keyCode);
+      }
     }
   }
 
@@ -402,14 +410,44 @@ function play() {
     }, 3000);
   }
 
-  setInterval(function() {
+  function togglePause() {
+    if(!isPaused) {
+      clearInterval(running);
+      isPaused = true;
+    }else {
+      running = setInterval(runTheGame, 30);
+      isPaused = false;
+    }
+  }
+
+  function restart() {
+    money = 0;
+    lives = 3;
+    level = 0;
+    isPaused = false;
+    gameBlocks.splice(0);
+    gameEnemies.splice(0);
+    createPlayGround();
+    createUnits();
+    gameBlocks.push(player);
+    player.hasKey = false;
+    player.isInvincible = false;
+    player.class = "player";
+    player.image = loadImage("img/char-boy.png");
+    player.resetPosition();
+    document.querySelector(".player-level").children[0].innerHTML = level + 1;
+    updateMoney();
+    updateLives();
+  }
+
+  function runTheGame() {
     gameBlocks.forEach(function(block) {
       block.draw();
     });
     gameEnemies.forEach(function(enemy) {
       enemy.move();
     });
-  }, 30);
+  }
 }
 
 document.querySelector(".game-menu").onclick = function(event) {
