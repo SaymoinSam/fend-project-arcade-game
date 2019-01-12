@@ -12,6 +12,7 @@ const gameImages = {
   enemy: loadImage("img/enemy-bug.png"),
   reversedEnemy: loadImage("img/enemy-bug-reverse.png"),
   rock: loadImage("img/rock.png"),
+  rockInWater : loadImage("img/rock-in-water.png"),
   grass: loadImage("img/grass-block.png"),
   stone: loadImage("img/stone-block.png"),
   water: loadImage("img/water-block.png"),
@@ -110,13 +111,30 @@ Block.prototype.equalsAnother = function(another) {
 }
 
 Block.prototype.checkWater = function() {
-  gameBlocks.forEach(function(block) {
+  gameBlocks.forEach(block => {
     if(block.class === "water" && block.equalsAnother(this)) {
       if(this.class === "player") {
         this.resetPosition();
+      }else if(this.class === "rock") {
+        let waterBlock = getWaterBlock(this);
+        waterBlock.image = loadImage("img/rock-in-water.png")
+        waterBlock.class = "rockInWater";
+        console.log(waterBlock);
+        gameBlocks.splice(gameBlocks.indexOf(this), 1);
+        console.log("rock in the water");
       }
     }
   });
+}
+
+function getWaterBlock(rockInWater) {
+  let waterBlock;
+  gameBlocks.forEach(function(block) {
+    if(block.equalsAnother(rockInWater) && block.class === "water") {
+      return waterBlock = block;
+    }
+  });
+  return waterBlock;
 }
 
 function moveUnit(direction) {
@@ -193,6 +211,7 @@ player.move = function (direction) {
   gameBlocks.forEach(block => {
     if(block.class === "rock" && block.equalsAnother(player) && this.canMove.call(block, direction)) {
       moveUnit.call(block, direction);
+      block.checkWater();
     }
   });
   this.checkWater();
