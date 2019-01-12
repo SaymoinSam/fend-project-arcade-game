@@ -229,6 +229,7 @@ player.move = function (direction) {
   if(this.canMove(direction) && this.canPushRock(direction)) {
     moveUnit.call(this, direction);
   }
+  this.collectItem();
   gameBlocks.forEach(block => {
     if(block.class === "rock" && block.equalsAnother(player) && this.canMove.call(block, direction)) {
       moveUnit.call(block, direction);
@@ -283,6 +284,16 @@ player.canPushRock = function(direction) {
 player.resetPosition = function() {
   player.x = 200;
   player.y = 400;
+}
+
+player.collectItem = function() {
+  const collectedItems = ["star", "key", "heart", "gemBlue", "gemOrange", "gemGreen"];
+  gameBlocks.forEach(block => {
+    if(this.equalsAnother(block) && collectedItems.indexOf(block.class) > -1) {
+      let collectedItem = block.class;
+      gameBlocks.splice(gameBlocks.indexOf(block), 1);
+    }
+  });
 }
 
 setInterval(function() {
