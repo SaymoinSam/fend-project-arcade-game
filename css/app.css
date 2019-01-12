@@ -64,10 +64,16 @@ p {
   top: 0;
   left: 0;
   position: absolute;
-  background-color: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.5) url(../img/background.png);
   display: flex;
   align-items: center;
   justify-content: center;
+  background-size: 100% 100%;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
 }
 
 li {
@@ -78,11 +84,16 @@ li {
   font-weight: bold;
   text-align: center;
   background: rgba(0,0,0,0.6) url();
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 5px;
   border-radius: 5px;
   cursor: pointer;
   text-shadow: 2px 2px 2px white, 1px 1px 1px green;
+}
+
+li:active {
+  background-color: rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 2px #000;
 }
 
 .hidden {
