@@ -450,9 +450,20 @@ function play() {
   }
 }
 
+function showGameRules() {
+  document.querySelector(".game-rules").classList.remove("hidden");
+}
+
 document.querySelector(".game-menu").onclick = function(event) {
   switch(event.target.textContent) {
     case "Play": play(); break;
+    case "Game rules": showGameRules(); break;
+  }
+};
+
+document.querySelector(".game-modal").onclick = function(event) {
+  if(event.target.className === "close-button") {
+    event.target.parentElement.classList.add("hidden");
   }
 };
 
