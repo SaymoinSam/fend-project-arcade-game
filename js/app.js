@@ -454,10 +454,15 @@ function showGameRules() {
   document.querySelector(".game-rules").classList.remove("hidden");
 }
 
+function showGameControls() {
+  document.querySelector(".game-controls").classList.remove("hidden");
+}
+
 document.querySelector(".game-menu").onclick = function(event) {
   switch(event.target.textContent) {
     case "Play": play(); break;
     case "Game rules": showGameRules(); break;
+    case "Controls": showGameControls();
   }
 };
 
