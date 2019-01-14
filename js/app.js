@@ -1,4 +1,5 @@
-function play() {
+function play(chosenPlayer) {
+  document.querySelector(".player-selection").classList.add("hidden");
   document.querySelector(".game-menu").classList.add("hidden");
   const  canvas = document.querySelector("canvas");
   const ctx = canvas.getContext("2d");
@@ -17,7 +18,8 @@ function play() {
   const game = {};
 
   game.images = {
-    player: loadImage("img/char-boy.png"),
+    player: loadImage(`img/${chosenPlayer}.png`),
+    superPlayer: loadImage(`img/${chosenPlayer}-super.png`),
     enemy: loadImage("img/enemy-bug.png"),
     reversedEnemy: loadImage("img/enemy-bug-reverse.png"),
     rock: loadImage("img/rock.png"),
@@ -402,11 +404,11 @@ function play() {
 
   function handleInvincibility() {
     player.class = "superPlayer";
-    player.image = loadImage("img/char-boy-super.png");
+    player.image = game.images.superPlayer;
     setTimeout(function() {
       player.isInvincible = false;
       player.class = "player";
-      player.image = loadImage("img/char-boy.png");
+      player.image = game.images.player;
     }, 3000);
   }
 
@@ -433,7 +435,7 @@ function play() {
     player.hasKey = false;
     player.isInvincible = false;
     player.class = "player";
-    player.image = loadImage("img/char-boy.png");
+    player.image = game.images.player;
     player.resetPosition();
     document.querySelector(".player-level").children[0].innerHTML = level + 1;
     updateMoney();
@@ -458,9 +460,14 @@ function showGameControls() {
   document.querySelector(".game-controls").classList.remove("hidden");
 }
 
+function showPlayerSelection() {
+  document.querySelector(".game-menu").classList.add("hidden");
+  document.querySelector(".player-selection").classList.remove("hidden");
+}
+
 document.querySelector(".game-menu").onclick = function(event) {
   switch(event.target.textContent) {
-    case "Play": play(); break;
+    case "Play": showPlayerSelection(); break;
     case "Game rules": showGameRules(); break;
     case "Controls": showGameControls();
   }
@@ -469,6 +476,12 @@ document.querySelector(".game-menu").onclick = function(event) {
 document.querySelector(".game-modal").onclick = function(event) {
   if(event.target.className === "close-button") {
     event.target.parentElement.classList.add("hidden");
+  }
+};
+
+document.querySelector(".player-selection").onclick = function(event) {
+  if(event.target.nodeName === "IMG") {
+    play(event.target.alt);
   }
 };
 

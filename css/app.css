@@ -70,7 +70,11 @@ p {
   background-image: url(../img/game-controls.png);
 }
 
-.game-menu, .game-rules, .game-controls {
+.player-selection {
+  background-image: url(../img/player-selection.png);
+}
+
+.game-menu, .game-rules, .game-controls, .player-selection {
   width: 100%;
   height: 100%;
   top: 0;
@@ -123,4 +127,14 @@ li:active {
   padding: 0 5px;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.player-selection img {
+  cursor: pointer;
+  height: 160px;
+  width: 95px;
+}
+
+.player-selection img:hover {
+  transform: scale(1.1,1.1);
 }
