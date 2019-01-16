@@ -399,7 +399,8 @@ function play(chosenPlayer) {
   }
 
   function loseTheGame() {
-    alert("You lose!");
+    clearInterval(running);
+    document.querySelector(".game-over").classList.remove("hidden");
   }
 
   function handleInvincibility() {
@@ -441,6 +442,14 @@ function play(chosenPlayer) {
     updateMoney();
     updateLives();
   }
+
+  document.querySelector(".game-over").onclick = function(event) {
+    if(event.target.nodeName === "BUTTON") {
+      play(chosenPlayer);
+      restart();
+      document.querySelector(".game-over").classList.add("hidden");
+    }
+  };
 
   function runTheGame() {
     gameBlocks.forEach(function(block) {
