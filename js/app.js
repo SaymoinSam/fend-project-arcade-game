@@ -384,7 +384,9 @@ function play(chosenPlayer) {
       treasure.class = "openedTreasure";
       player.x -= 100;
       setTimeout(function() {
-        alert("You won");
+        clearInterval(running);
+        document.querySelector(".game-over").classList.remove("hidden");
+        document.querySelector(".game-message").innerHTML = "You Win!";
       }, 1000);
     }
     return true;
@@ -401,6 +403,7 @@ function play(chosenPlayer) {
   function loseTheGame() {
     clearInterval(running);
     document.querySelector(".game-over").classList.remove("hidden");
+    document.querySelector(".game-message").innerHTML = "You lose";
   }
 
   function handleInvincibility() {
