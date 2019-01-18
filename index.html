@@ -3,29 +3,40 @@
 <head>
   <meta charset="utf-8">
   <title>Arcade Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Toumi Fouad Saadi">
   <meta name="description" content="A UDACITY project of the Front-End-Nano-Degree">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 
+  <div class="warning">
+    <p>The game doesn't support landscape mode!</p>
+  </div>
   <main>
     <section class="game-board">
-    <div class="player-lives">
-      <img src="img/heart.png">
-      <img src="img/heart.png">
-      <img src="img/heart.png">
-    </div>
-    <div class="player-level">Level <span>1</span></div>
-    <div class="player-money">
-      $<span>0</span>
-    </div>
+      <div class="player-lives">
+        <img src="img/heart.png">
+        <img src="img/heart.png">
+        <img src="img/heart.png">
+      </div>
+      <div class="player-level">
+        Level <span>1</span>
+      </div>
+      <div class="player-money">
+        $<span>0</span>
+      </div>
+      <div class="icon-buttons">
+        <button class="material-icons">pause</button>
+        <button class="material-icons">refresh</button>
+      </div>
     </section>
     <section class="game-menu">
       <ul>
-        <li class="button">Play</li>
-        <li class="button">Controls</li>
-        <li class="button">Game rules</li>
+        <li>Play</li>
+        <li>Controls</li>
+        <li>Game rules</li>
       </ul>
     </section>
     <section class="game-modal">

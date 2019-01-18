@@ -5,6 +5,24 @@ Array.prototype.forEach.call(document.querySelectorAll('*'), function(element) {
   element.classList[0] && (gameDom[`${element.classList[0]}`] = element);
 });
 
+const gameScreen = {};
+gameScreen.canvas = document.querySelector("canvas");
+function setGamesize() {
+  let width, height;
+  window.outerWidth >= 452 ? (width = 450, height = 420) :
+    window.outerWidth >= 402 ? (width = 400, height = 360) :
+    window.outerWidth >= 352 ? (width = 350, height = 300) :
+    window.outerWidth >= 302 ? (width = 300, height = 240) :
+      width = 250, height = 180;
+  window.outerWidth >= 502 && (width = 500, height = 480);
+  gameScreen.width = width, gameScreen.height = height;
+  gameScreen.canvas.width = width, gameScreen.canvas.height = height;
+  gameScreen.cellWidth = width / 5, gameScreen.cellHeight = height / 6;
+  gameScreen.widthConst = width / 500 > 1 ? 1 : width / 500,
+  gameScreen.heightConst = height / 480 > 1 ? 1 : height / 480;
+}
+setGamesize();
+
 function showElement(element) {
   element.classList.remove('hidden');
 }
@@ -64,8 +82,9 @@ function play(chosenPlayer) {
   game.levels = [level1, level2], game.canvas = document.querySelector("canvas");
   game.ctx = game.canvas.getContext("2d"), game.blocks = [];
   game.money = 0, game.lives = 3, game.level = 0;
-  game.isPaused = false, game.running = setInterval(runTheGame, 30);
+  game.isPaused = false, game.running = setInterval(runTheGame, 35);
   game.controls = {37: "left", 38: "up", 39: "right", 40: "down"};
+  game.clickPoints = [], game.isDragging = false;
   game.images = {
     player: loadImage(`img/${chosenPlayer}.png`),
     superPlayer: loadImage(`img/${chosenPlayer}-super.png`),
@@ -117,7 +136,7 @@ function play(chosenPlayer) {
 
   class Block {
     constructor(row, col, obj) {
-      this.x = row * 100, this.y = col * 80, this.image = game.images[obj];
+      this.x = row * gameScreen.cellWidth, this.y = col * gameScreen.cellHeight, this.image = game.images[obj];
       this.draw(), this.class = obj;
     }
   }
@@ -137,7 +156,7 @@ function play(chosenPlayer) {
       case "gemBlue": case "gemGreen": case "gemOrange":
         xStart = -20, yStart = 10, xLong = 60 , yLong = 80;
     }
-    game.ctx.drawImage(this.image, this.x - xStart, this.y - yStart, xLong, yLong);
+    game.ctx.drawImage(this.image, this.x - (xStart * gameScreen.widthConst), this.y - (yStart * gameScreen.heightConst), xLong * gameScreen.widthConst, yLong * gameScreen.heightConst);
   }
 
   Block.prototype.equalsAnother = function(another) {
@@ -163,10 +182,10 @@ function play(chosenPlayer) {
     let siblings = {left:{}, right:{}, up: {}, down: {}};
     game.blocks.forEach(block => {
       if(block.class === "rock") {
-        this.x - block.x === 100 && this.y === block.y && (siblings.left = block);
-        this.x - block.x === -100 && this.y === block.y && (siblings.right = block);
-        this.y - block.y === 80 && this.x === block.x && (siblings.up = block);
-        this.y - block.y === -80 && this.x === block.x && (siblings.down = block);
+        this.x - block.x === gameScreen.cellWidth && this.y === block.y && (siblings.left = block);
+        this.x - block.x === -gameScreen.cellWidth && this.y === block.y && (siblings.right = block);
+        this.y - block.y === gameScreen.cellHeight && this.x === block.x && (siblings.up = block);
+        this.y - block.y === -gameScreen.cellHeight && this.x === block.x && (siblings.down = block);
       }
     });
     return siblings;
@@ -184,10 +203,10 @@ function play(chosenPlayer) {
 
   function moveUnit(direction) {
     switch(direction) {
-      case "left": this.x -= 100; break;
-      case "up": this.y -= 80; break;
-      case "right": this.x += 100; break;
-      case "down": this.y += 80;
+      case "left": this.x -= gameScreen.cellWidth; break;
+      case "up": this.y -= gameScreen.cellHeight; break;
+      case "right": this.x += gameScreen.cellWidth; break;
+      case "down": this.y += gameScreen.cellHeight;
     }
   }
 
@@ -216,11 +235,11 @@ function play(chosenPlayer) {
       });
     }
     this.direction === "left" ? this.x -= this.speed : this.x += this.speed;
-    this.x >= 500 ? this.x = -100 : this.x <= -100 && (this.x = 500);
+    this.x >= gameScreen.width ? this.x = -gameScreen.cellWidth : this.x <= -gameScreen.cellWidth && (this.x = gameScreen.width);
   }
 
   Enemy.prototype.hasHitSomething = function(something) {
-    return this.x - something.x <= 80 && this.x - something.x >= -80 &&
+    return this.x - something.x <= gameScreen.cellWidth - gameScreen.cellWidth / 5 && this.x - something.x >= -(gameScreen.cellWidth - gameScreen.cellWidth / 5) &&
       this.y === something.y;
   }
 
@@ -248,9 +267,9 @@ function play(chosenPlayer) {
         return false;
     }
     if(this.x === 0 && direction === "left" ||
-      this.x === 400 && direction === "right" ||
+      this.x === gameScreen.cellWidth * 4 && direction === "right" ||
       this.y === 0 && direction === "up" ||
-      this.y === 400 && direction === "down") {
+      this.y === gameScreen.cellHeight * 5 && direction === "down") {
         return false;
     }
     return true;
@@ -260,13 +279,13 @@ function play(chosenPlayer) {
     let canMove = true;
     game.blocks.forEach(block => {
       if(block.class === "rock" && !this.canMove.call(block, direction)) {
-        if(block.x - this.x === 100 && block.y === this.y && direction === "right") {
+        if(block.x - this.x === gameScreen.cellWidth && block.y === this.y && direction === "right") {
           return canMove = false;
-        }else if(block.x - this.x === -100 && block.y === this.y && direction === "left") {
+        }else if(block.x - this.x === -gameScreen.cellWidth && block.y === this.y && direction === "left") {
           return canMove = false;
-        }else if(block.y - this.y === 80 && block.x === this.x && direction === "down") {
+        }else if(block.y - this.y === gameScreen.cellHeight && block.x === this.x && direction === "down") {
           return canMove = false;
-        }else if(block.y - this.y === -80 && block.x === this.x && direction === "up") {
+        }else if(block.y - this.y === -gameScreen.cellHeight && block.x === this.x && direction === "up") {
           return canMove = false;
         }
       }
@@ -275,7 +294,7 @@ function play(chosenPlayer) {
   }
 
   game.player.resetPosition = function() {
-    this.x = 200, this.y = 400;
+    this.x = gameScreen.cellWidth * 2, this.y = gameScreen.cellHeight * 5;
   }
 
   game.player.collectItem = function() {
@@ -292,9 +311,9 @@ function play(chosenPlayer) {
   }
 
   game.player.checkNextLevel = function() {
-    this.y === 0 && (this.x - this.x % 100) / 100 === game.levels[game.level].exit
+    this.y === 0 && (this.x - this.x % gameScreen.cellWidth) / gameScreen.cellWidth === game.levels[game.level].exit
     && (game.level++, game.blocks.splice(0), game.createPlayGround(),
-      game.createUnits(), game.blocks.push(game.player), game.player.y = 400,
+      game.createUnits(), game.blocks.push(game.player), game.player.y = gameScreen.cellHeight * 5,
       gameDom["player-level"].children[0].innerHTML = game.level + 1);
   }
 
@@ -312,7 +331,7 @@ function play(chosenPlayer) {
   function checkTreasure(treasure) {
     if(game.player.hasKey) {
       treasure.image = game.images.openedTreasure;
-      treasure.class = "openedTreasure", game.player.x -= 100;
+      treasure.class = "openedTreasure", game.player.x -= gameScreen.cellWidth;
       setTimeout(function() {
         clearInterval(game.running), gameDom["game-over"].classList.remove("hidden");
         gameDom["game-message"].innerHTML = "You Win!";
@@ -343,13 +362,15 @@ function play(chosenPlayer) {
   }
 
   game.togglePause = function() {
-    !this.isPaused ? (clearInterval(this.running), this.isPaused = true) :
-      (this.running = setInterval(runTheGame, 30), this.isPaused = false);
+    const pauseButton = gameDom["icon-buttons"].children[0];
+    !this.isPaused ? (clearInterval(this.running), this.isPaused = true, pauseButton.innerHTML = "play_arrow") :
+      (this.running = setInterval(runTheGame, 35), this.isPaused = false, pauseButton.innerHTML = "pause");
   }
 
   game.restart = function() {
+    this.isPaused && game.togglePause();
     this.money = 0, this.lives = 3, this.level = 0;
-    this.isPaused = false, this.blocks.splice(0), this.createPlayGround();
+    this.blocks.splice(0), this.createPlayGround();
     this.createUnits(), this.blocks.push(game.player), this.player.hasKey = false;
     this.player.isInvincible = false, this.player.class = "player";
     this.player.image = game.images.player, this.player.resetPosition();
@@ -365,14 +386,14 @@ function play(chosenPlayer) {
   }
 
   document.body.onkeyup = function(e) {
-    if(game.isPaused) {
-      e.keyCode === 80 && game.togglePause();
+    e.keyCode === 82 && game.restart();
+    if(game.isPaused && e.keyCode === 80) {
+      game.togglePause();
     }else {
       switch(e.keyCode) {
         case 37: case 38: case 39: case 40:
           game.player.move(game.controls[e.keyCode]); break;
         case 80: game.togglePause(); break;
-        case 82: game.restart();
       }
     }
   }
@@ -381,6 +402,49 @@ function play(chosenPlayer) {
     event.target.nodeName === "BUTTON" && (play(chosenPlayer), game.restart(),
       hideElement(this));
   };
+
+  gameDom["icon-buttons"].onclick = gameDom["icon-buttons"].ontouchstart = function(event) {
+    if(event.target.nodeName === "BUTTON") {
+      if(event.target.textContent === "pause" || event.target.textContent === "play_arrow") {
+        game.togglePause();
+      }else if(event.target.textContent === "refresh") {
+        game.restart();
+      }
+    }
+  };
+
+  window.ontouchstart = function(e) {
+    e.preventDefault();
+    game.isDragging = true;
+    game.clickPoints[0] = e.touches[0].screenX;
+    game.clickPoints[1] = e.touches[0].screenY;
+  }
+
+  window.ontouchend = function(e) {
+    e.preventDefault();
+    game.isDragging = false;
+  }
+
+  window.ontouchmove = function(e) {
+    e.preventDefault();
+    if(!game.isDragging) {
+      return;
+    }
+    let direction;
+    if(e.touches[0].screenX - game.clickPoints[0] >= 50 && e.touches[0].screenY - game.clickPoints[1] <= 25 && e.touches[0].screenY - game.clickPoints[1] >= -25) {
+      direction = "right";
+    }else if(game.clickPoints[0] - e.touches[0].screenX >= 50 && e.touches[0].screenY - game.clickPoints[1] <= 25 && e.touches[0].screenY - game.clickPoints[1] >= -25) {
+      direction = "left";
+    }else if(e.touches[0].screenY - game.clickPoints[1] >= 50 && e.touches[0].screenX - game.clickPoints[0] <= 25 && e.touches[0].screenX - game.clickPoints[0] >= -25) {
+      direction = "down";
+    }else if(game.clickPoints[1] - e.touches[0].screenY >= 50 && e.touches[0].screenX - game.clickPoints[0] <= 25 && e.touches[0].screenX - game.clickPoints[0] >= -25) {
+      direction = "up";
+    }
+    if(direction) {
+      game.player.move(direction);
+      game.isDragging = false;
+    }
+  }
 
   hideElement(gameDom["player-selection"]), hideElement(gameDom["game-menu"]);
 }
