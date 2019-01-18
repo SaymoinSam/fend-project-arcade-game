@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Toumi Fouad Saadi">
   <meta name="description" content="A UDACITY project of the Front-End-Nano-Degree">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
@@ -15,11 +15,11 @@
     <p>The game doesn't support landscape mode!</p>
   </div>
   <main>
-    <section class="game-board">
+    <div class="game-board">
       <div class="player-lives">
-        <img src="img/heart.png">
-        <img src="img/heart.png">
-        <img src="img/heart.png">
+        <img src="img/heart.png" alt="heart">
+        <img src="img/heart.png" alt="heart">
+        <img src="img/heart.png" alt="heart">
       </div>
       <div class="player-level">
         Level <span>1</span>
@@ -31,20 +31,20 @@
         <button class="material-icons">pause</button>
         <button class="material-icons">refresh</button>
       </div>
-    </section>
-    <section class="game-menu">
+    </div>
+    <div class="game-menu">
       <ul>
         <li>Play</li>
         <li>Controls</li>
         <li>Game rules</li>
       </ul>
-    </section>
-    <section class="game-modal">
+    </div>
+    <div class="game-modal">
       <div class="game-rules hidden">
-        <span class="close-button">&times;</span>
+        <span class="close-button material-icons">cancel</span>
       </div>
       <div class="game-controls hidden">
-        <span class="close-button">&times;</span>
+        <span class="close-button material-icons">cancel</span>
       </div>
       <div class="player-selection hidden">
         <img src="img/char-boy.png" alt="char-boy">
@@ -59,7 +59,7 @@
           <button>Play again</button>
         </div>
       </div>
-    </section>
+    </div>
     <canvas width="500" height="480"></canvas>
   </main>
 

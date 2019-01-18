@@ -5,26 +5,42 @@
   user-select: none;
 }
 
-html, body {
+html,
+body {
+  /* Preventing Chrome's Pull-to-Refresh on Android */
+  overscroll-behavior: none;
+  position: relative;
   height: 100%;
   width: 100%;
-  margin: 0;
-  position: relative;
-  /*Preventing Chrome's Pull-to-Refresh on Android*/
-  overscroll-behavior: none;
 }
 
-body {
-  display: flex;
+body,
+.warning,
+.game-board,
+.game-rules,
+.game-over,
+.game-menu,
+.player-lives,
+.player-money,
+.player-level,
+.icon-buttons,
+.game-controls,
+.player-selection {
   justify-content: center;
   align-items: center;
+  display: flex;
+}
+
+.warning {
+  display: none;
 }
 
 main {
   position: relative;
 }
 
-canvas, .game-board {
+canvas,
+.game-board {
   box-shadow: 1px 1px 2px black;
 }
 
@@ -33,30 +49,49 @@ img {
   width: 30px;
 }
 
+p,
+ul,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.warning,
+.game-menu,
+.game-over,
+.game-rules,
+.game-controls,
+.player-selection {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+/*
+ * Styles for the game board
+ */
 .game-board {
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
   background-color: rgba(0,0,0,0.6);
   border-radius: 5px 5px 0 0;
+  padding: 0 10px;
   height: 50px;
 }
 
-.player-lives, .player-money, .player-level, .icon-buttons {
-  width: 25%;
-  display: flex;
-  align-items: center;
-}
-
-.player-level, .player-money, .icon-buttons {
+.player-level,
+.player-money,
+.icon-buttons {
+  text-shadow: 1px 1px black;
   justify-content: flex-end;
+  font-weight: bold;
   font-size: 24px;
   color: white;
-  text-shadow: 1px 1px black;
-  font-weight: bold;
 }
 
-.player-level {
+.player-level, .player-lives {
   justify-content: flex-start;
 }
 
@@ -64,16 +99,55 @@ img {
   justify-content: center;
 }
 
-p {
-  margin: 0;
+.player-lives,
+.player-money,
+.player-level,
+.icon-buttons {
+  width: 25%;
 }
 
-.game-rules {
-  background-image: url(../img/game-rules.png);
+.icon-buttons button {
+  margin-left: 5px;
+  font-size: 20px;
+  padding: 5px;
 }
 
+/*
+ * Styles for the game menu
+ */
 .game-menu {
   background-image: url(../img/background.png);
+}
+
+li,
+button {
+  text-shadow: 2px 2px 2px white, 1px 1px 1px green;
+  background-color: rgba(0,0,0,0.6);
+  font: bold 30px Verdana;
+  list-style-type: none;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: center;
+  padding: 12px;
+  color: white;
+  border: none;
+}
+
+li:active,
+button:active {
+  background-color: rgba(0,0,0,0.3);
+  box-shadow: 1px 1px 2px #000;
+}
+
+.hidden {
+  display: none;
+}
+
+/*
+ * Styles for the game modal
+ */
+.game-rules {
+  background-image: url(../img/game-rules.png);
 }
 
 .game-controls {
@@ -84,72 +158,27 @@ p {
   background-image: url(../img/player-selection.png);
 }
 
-.warning, .game-menu, .game-rules, .game-controls, .player-selection, .game-over {
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-}
-
-li, button {
-  list-style-type: none;
-  font-size: 30px;
-  color: white;
-  font-family: Verdana;
-  font-weight: bold;
-  text-align: center;
-  background: rgba(0,0,0,0.6) url();
-  padding: 12px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  text-shadow: 2px 2px 2px white, 1px 1px 1px green;
-  border: none;
-}
-
-.icon-buttons button {
-  font-size: 20px;
-  padding: 5px;
-  margin-left: 5px;
-}
-
-li:active, button:active {
-  background-color: rgba(0,0,0,0.3);
-  box-shadow: 1px 1px 2px #000;
-}
-
-.hidden {
-  display: none;
-}
-
 .close-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
   box-shadow: 1px 1px 2px white;
-  padding: 0 5px;
+  position: absolute;
   border-radius: 5px;
-  cursor: pointer;
+  font: bold 24px;
+  padding: 0 5px;
+  color: white;
+  right: 5px;
+  top: 5px;
 }
 
 .player-selection img {
-  cursor: pointer;
   height: 160px;
   width: 95px;
+}
+
+li,
+button,
+.close-button,
+.player-selection img {
+  cursor: pointer;
 }
 
 .player-selection img:hover {
@@ -157,65 +186,70 @@ li:active, button:active {
 }
 
 .game-message {
-  color: white;
-  font-size: 48px;
-  font-weight: bold;
-  font-family: monospace;
   text-shadow: 1px 1px black;
+  font: bold 48px monospace;
+  color: white;
 }
 
 .container {
   text-align: center;
 }
 
-.warning {
-  display: none;
-}
-
+/* Make the screen responsive */
 @media screen and (max-width: 502px) {
   .game-message {
     font-size: calc(100vw / 10.41);
   }
+
   img {
-    height: calc(100vw / 10);
     width: calc(100vw / 16.66);
+    height: calc(100vw / 10);
   }
+
   .player-selection img {
     height: calc(100vw / 3.125);
     width: calc(100vw / 5.26);
   }
+
   .player-money, .player-level {
     font-size: calc(100vw / 20.83);
   }
+
   .game-board {
-    height: calc(100vw / 10);
     padding: 0 calc(100vw / 100);
+    height: calc(100vw / 10);
   }
-  li, button {
-    font-size: calc(100vw / 16.66);
-    padding: calc(100vw / 41.66);
+
+  li,
+  button {
     margin-bottom: calc(100vw / 100);
     border-radius: calc(100vw / 100);
+    font-size: calc(100vw / 16.66);
+    padding: calc(100vw / 41.66);
   }
+
   .close-button {
-    top: calc(100vw / 100);
-    right: calc(100vw / 100);
+    border-radius: calc(100vw / 100);
     font-size: calc(100vw / 16.66);
     box-shadow: 1px 1px 2px white;
     padding: 0 calc(100vw / 100);
-    border-radius: calc(100vw / 100);
+    right: calc(100vw / 100);
+    top: calc(100vw / 100);
   }
+
   .icon-buttons button {
+    margin-left: calc(100vw / 100);
     font-size: calc(100vw / 20);
     padding: calc(100vw / 100);
-    margin-left: calc(100vw / 100);
   }
 }
 
+/* Warn the user that the landscape mode is not supported and hide the game */
 @media screen and (max-width: 502px) and (orientation: landscape) {
   main {
     display: none;
   }
+
   .warning {
     display: flex;
   }
