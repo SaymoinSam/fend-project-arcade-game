@@ -7,7 +7,9 @@ Array.prototype.forEach.call(document.querySelectorAll('*'), function(element) {
 
 const GAME_SCREEN = {};
 GAME_SCREEN.canvas = document.querySelector('canvas');
-
+/**
+* @description sets the size of the game
+*/
 function setGamesize() {
   let width, height;
   window.outerWidth >= 452 ? (width = 450, height = 420) :
@@ -23,14 +25,24 @@ function setGamesize() {
   GAME_SCREEN.heightConst = height / 480 > 1 ? 1 : height / 480;
 }
 setGamesize();
+/**
+* @description Shows an element
+* @param {object} element - The DOM object
+*/
 function showElement(element) {
   element.classList.remove('hidden');
 }
-
+/**
+* @description Hides an element
+* @param {object} element - The DOM object
+*/
 function hideElement(element) {
   element.classList.add('hidden');
 }
-
+/**
+* @description Starts the game
+* @param {string} chosenPlayer - The character's name
+*/
 function play(chosenPlayer) {
   const GAME = {},
     level1 = {
@@ -105,13 +117,19 @@ function play(chosenPlayer) {
     closedTreasure: loadImage('img/closed-treasure.png'),
     openedTreasure: loadImage('img/opened-treasure.png')
   };
-
+  /**
+  * @description Loads images
+  * @param {string} src - The src of the image
+  * @returns {object} the loaded image
+  */
   function loadImage(src) {
     const IMAGE = document.createElement('img');
     IMAGE.src = src;
     return IMAGE;
   }
-
+  /**
+  * @description Creates the playground of the game
+  */
   GAME.createPlayGround = function() {
     for(let x = 0;x < 6; x++) {
       for(let y = 0;y < 5; y++) {
@@ -119,7 +137,9 @@ function play(chosenPlayer) {
       }
     }
   };
-
+  /**
+  * @description Creates the units of the game
+  */
   GAME.createUnits = function() {
     for(let x = 0;x < GAME.levels[GAME.level].units.length; x++) {
       for(let y = 0; y < GAME.levels[GAME.level].units[x].length; y++) {
@@ -133,14 +153,22 @@ function play(chosenPlayer) {
       GAME.blocks.push(anEnemy);
     });
   };
-
+  /**
+  * @constructor Block
+  * @description Creates a new block
+  * @param {number} row - the number of row
+  * @param {number} col - the number of column
+  * @param {string} obj - the block name
+  */
   class Block {
     constructor(col, row, obj) {
       this.x = col * GAME_SCREEN.cellWidth, this.y = row * GAME_SCREEN.cellHeight, this.image = GAME.images[obj];
       this.draw(), this.class = obj;
     }
   }
-
+  /**
+  * @description Draws the block
+  */
   Block.prototype.draw = function() {
     let xStart = 0, xLong = 101, yStart = 50, yLong = 171;
     switch(this.class) {
@@ -160,11 +188,17 @@ function play(chosenPlayer) {
       this.y - (yStart * GAME_SCREEN.heightConst),
       xLong * GAME_SCREEN.widthConst, yLong * GAME_SCREEN.heightConst);
   };
-
+  /**
+  * @description Checks if a block equals another block
+  * @param {object} another - the block to check against
+  * @returns {boolean} block equals another block or not
+  */
   Block.prototype.equalsAnother = function(another) {
     return this.x === another.x && this.y === another.y;
   };
-
+  /**
+  * @description Checks if a block is in water then handles it
+  */
   Block.prototype.checkWater = function() {
     GAME.blocks.forEach(block => {
       if(block.class === 'water' && block.equalsAnother(this)) {
@@ -186,7 +220,10 @@ function play(chosenPlayer) {
       }
     });
   };
-
+  /**
+  * @description Gets all sibling rocks
+  * @returns {object} SIBLINGS - the sibling rocks
+  */
   Block.prototype.getSiblingRocks = function() {
     const SIBLINGS = {left:{}, right:{}, up: {}, down: {}};
     GAME.blocks.forEach(block => {
@@ -203,7 +240,11 @@ function play(chosenPlayer) {
     });
     return SIBLINGS;
   };
-
+  /**
+  * @description Gets the water block that has a rock in it
+  * @param {object} rockInWater - the rock to check against
+  * @returns {object} the water object
+  */
   function getWaterBlock(rockInWater) {
     let waterBlock;
     GAME.blocks.forEach(function(block) {
@@ -213,7 +254,10 @@ function play(chosenPlayer) {
     });
     return waterBlock;
   }
-
+  /**
+  * @description Moves a unit
+  * @param {string} direction - the direction to move the unit to
+  */
   function moveUnit(direction) {
     switch(direction) {
       case 'left': this.x -= GAME_SCREEN.cellWidth; break;
@@ -222,14 +266,23 @@ function play(chosenPlayer) {
       case 'down': this.y += GAME_SCREEN.cellHeight;
     }
   }
-
+  /**
+  * @constructor Enemy
+  * @description Creates a new enemy
+  * @param {number} x - the number of column
+  * @param {number} y - the number of row
+  * @param {number} speed - the speed of the enemy
+  * @param {string} direction - the direction the enemy moves in
+  */
   class Enemy extends Block {
     constructor(x, y, speed, direction) {
       super(x, y, direction === 'left' ? 'reversedEnemy' : 'enemy', speed);
       this.speed = speed, this.direction = direction;
     }
   }
-
+  /**
+  * @description Handles the enemy's moving
+  */
   Enemy.prototype.move = function() {
     if(this.hasHitSomething(GAME.player) && !GAME.player.isInvincible) {
       --GAME.lives === 0 && loseTheGame();
@@ -255,7 +308,11 @@ function play(chosenPlayer) {
     this.x >= GAME_SCREEN.width ? this.x = -GAME_SCREEN.cellWidth :
       this.x <= -GAME_SCREEN.cellWidth && (this.x = GAME_SCREEN.width);
   };
-
+  /**
+  * @description Returns if an enemy collided with something
+  * @param {object} something - the block to check against
+  * @returns {boolean} if an enemy collided with something
+  */
   Enemy.prototype.hasHitSomething = function(something) {
     return this.x - something.x <= GAME_SCREEN.cellWidth - GAME_SCREEN.cellWidth /
     5 && this.x - something.x >= -(GAME_SCREEN.cellWidth - GAME_SCREEN.cellWidth / 5) &&
@@ -266,6 +323,10 @@ function play(chosenPlayer) {
   GAME.createUnits();
   GAME.player = new Block(1, 5, 'player');
   GAME.blocks.push(GAME.player);
+  /**
+  * @description Handles the player's moving
+  * @param {string} direction - the direction to move the player in
+  */
   GAME.player.move = function (direction) {
     this.canMove(direction) && this.canPushRock(direction) ?
       moveUnit.call(this, direction) : !this.canMove('up') &&
@@ -278,7 +339,11 @@ function play(chosenPlayer) {
     });
     this.collectItem(), this.checkWater();
   };
-
+  /**
+  * @description Returns if the player can move
+  * @param {string} direction - the direction the player wants to move in
+  * @returns {boolean} if the player can move in the given direction
+  */
   GAME.player.canMove = function(direction) {
     const SIBLINGS = this.getSiblingRocks();
     if(SIBLINGS[direction].class === 'rock' &&
@@ -293,7 +358,11 @@ function play(chosenPlayer) {
     }
     return true;
   };
-
+  /**
+  * @description Returns if the player can push a rock
+  * @param {string} direction - the direction the player wants to push the rock in
+  * @returns {boolean} if the player can push a rock in the given direction
+  */
   GAME.player.canPushRock = function(direction) {
     let canMove = true;
     GAME.blocks.forEach(block => {
@@ -314,11 +383,15 @@ function play(chosenPlayer) {
     });
     return canMove;
   };
-
+  /**
+  * @description Resets the player's position
+  */
   GAME.player.resetPosition = function() {
     this.x = GAME_SCREEN.cellWidth * 2, this.y = GAME_SCREEN.cellHeight * 5;
   };
-
+  /**
+  * @description Handles collecting items
+  */
   GAME.player.collectItem = function() {
     const COLLECTED_ITEMS = ['star', 'key', 'heart', 'gemBlue', 'gemOrange',
       'gemGreen', 'closedTreasure'];
@@ -331,7 +404,9 @@ function play(chosenPlayer) {
       }
     });
   };
-
+  /**
+  * @description Handles going to the next level
+  */
   GAME.player.checkNextLevel = function() {
     this.y === 0 && (this.x - this.x %
      GAME_SCREEN.cellWidth) / GAME_SCREEN.cellWidth === GAME.levels[GAME.level].exit
@@ -340,7 +415,10 @@ function play(chosenPlayer) {
       GAME.player.y = GAME_SCREEN.cellHeight * 5,
       GAME_DOM['player-level'].children[0].innerHTML = GAME.level + 1);
   };
-
+  /**
+  * @description Take action on different collected items
+  * @param {string} collectedItem - the collected item's name
+  */
   function handleCollectedItem(collectedItem) {
     switch(collectedItem) {
       case 'gemGreen': GAME.money += 500; updateMoney(); break;
@@ -351,7 +429,10 @@ function play(chosenPlayer) {
       case 'star': GAME.player.isInvincible = true; handleInvincibility();
     }
   }
-
+  /**
+  * @description Handles the treasure opening
+  * @param {object} treasure - the treasure to handle
+  */
   function checkTreasure(treasure) {
     if(GAME.player.hasKey) {
       treasure.image = GAME.images.openedTreasure;
@@ -363,22 +444,30 @@ function play(chosenPlayer) {
     }
     return true;
   }
-
+  /**
+  * @description Updates the money
+  */
   function updateMoney() {
     GAME_DOM['player-money'].children[0].innerHTML = GAME.money;
   }
-
+  /**
+  * @description Updates the lives
+  */
   function updateLives() {
     GAME_DOM['player-lives'].innerHTML = '<img src="img/heart.png">\n'.repeat(GAME.lives);
   }
-
+  /**
+  * @description handles loosing the game
+  */
   function loseTheGame() {
     setInterval(function() {
       clearInterval(GAME.running), showElement(GAME_DOM['game-over']);
       GAME_DOM['game-message'].innerHTML = 'You lose';
     }, 100);
   }
-
+  /**
+  * @description Handles player's invincibility
+  */
   function handleInvincibility() {
     GAME.player.class = 'superPlayer', GAME.player.image = GAME.images.superPlayer;
     setTimeout(function() {
@@ -386,7 +475,9 @@ function play(chosenPlayer) {
       GAME.player.image = GAME.images.player;
     }, 3000);
   }
-
+  /**
+  * @description Handles game pause and resume
+  */
   GAME.togglePause = function() {
     const PAUSE_BUTTON = GAME_DOM['icon-buttons'].children[0];
     !this.isPaused ? (clearInterval(this.running), this.isPaused = true,
@@ -394,7 +485,9 @@ function play(chosenPlayer) {
       (this.running = setInterval(runTheGame, 35), this.isPaused = false,
       PAUSE_BUTTON.innerHTML = 'pause');
   };
-
+  /**
+  * @description Handles game restarting
+  */
   GAME.restart = function() {
     this.isPaused && GAME.togglePause();
     this.money = 0, this.lives = 3, this.level = 0;
@@ -406,13 +499,17 @@ function play(chosenPlayer) {
     updateMoney(), updateLives();
   };
   GAME.restart();
-
+  /**
+  * @description Handles running the game
+  */
   function runTheGame() {
     GAME.blocks.forEach(function(block) {
       block.draw(), block.class.indexOf('nemy') > -1 && block.move();
     });
   }
-
+  /**
+  * @description Adds keyboard shotcuts to the game
+  */
   document.body.onkeyup = function(e) {
     e.keyCode === 82 && GAME.restart();
     if(GAME.isPaused && e.keyCode === 80) {
@@ -440,7 +537,10 @@ function play(chosenPlayer) {
       }
     }
   };
-
+  /**
+  * window.ontouchstart, window.ontouchend, window.ontouchmove
+  * @description Make the game playable on touch devices(smart phones, tablets...)
+  */
   window.ontouchstart = function(e) {
     e.preventDefault();
     GAME.isDragging = true;
