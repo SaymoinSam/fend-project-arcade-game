@@ -47,51 +47,240 @@ function play(chosenPlayer) {
   const GAME = {},
     level1 = {
       playGround: [
-        ['water','water','water','water','water'],
-        ['water','stone','stone','stone','stone'],
-        ['stone','stone','stone','stone','stone'],
+        ['grass','water','water','water','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['grass','grass','grass','grass','grass'],
         ['stone','stone','stone','stone','stone'],
         ['grass','grass','grass','grass','grass'],
         ['grass','grass','grass','grass','grass']
       ],
       units: [
         ['','','','',''],
-        ['','key','','rock',''],
-        ['gemBlue','gemOrange','gemGreen','',''],
-        ['star','heart','','',''],
-        ['','rock','rock','openedTreasure',''],
-        ['','','','','closedTreasure']
-      ],
-      enemies: [
-        [4, 1, 2, 'left'],
-        [1, 2, 5],
-        [1, 3, 8, 'left']
-      ],
-      exit: 2
-    },
-    level2 = {
-      playGround: [
-        ['water','water','water','water','water'],
-        ['water','stone','stone','stone','stone'],
-        ['stone','stone','stone','stone','stone'],
-        ['stone','stone','stone','stone','stone'],
-        ['grass','grass','grass','grass','grass'],
-        ['grass','grass','grass','grass','grass']
-      ],
-      units: [
+        ['','','','gemGreen',''],
         ['','','','',''],
-        ['','key','','rock',''],
         ['','','','',''],
-        ['star','heart','','',''],
-        ['','rock','rock','',''],
+        ['','','','',''],
         ['','','','','']
       ],
       enemies: [
-        [4, 1, 2, 'left'],
+        [2, 3, 4, 'left'],
+      ],
+      exit: 0
+    },
+    level2 = {
+      playGround: [
+        ['water','water','grass','water','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','grass','grass'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','','gemGreen'],
+        ['','','','',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [4, 3, 7, 'left'],
         [1, 2, 5],
       ],
+      exit: 2
+    },
+    level3 = {
+      playGround: [
+        ['water','water','water','grass','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['gemOrange','','','',''],
+        ['','','','',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [4, 3, 7, 'left'],
+        [1, 2, 5],
+        [1, 4, 8, 'left']
+      ],
+      exit: 3
+    },
+    level4 = {
+      playGround: [
+        ['water','water','water','rockInWater','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','water','rockInWater','stone'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','','gemBlue','',''],
+        ['','','','',''],
+        ['','','','','heart'],
+        ['','','','rock',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [4, 2, 7, 'left'],
+        [1, 4, 5],
+      ],
+      exit: 1
+    },
+    level5 = {
+      playGround: [
+        ['water','water','water','rockInWater','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','rock','gemBlue','',''],
+        ['','','','',''],
+        ['','','','',''],
+        ['','','','rock',''],
+        ['star','','','','']
+      ],
+      enemies: [
+        [4, 2, 7, 'left'],
+        [1, 3, 5],
+        [2, 4, 8, 'left'],
+      ],
+      exit: 4
+    },
+    level6 = {
+      playGround: [
+        ['water','water','water','water','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['water','water','water','rockInWater','water'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','rock','gemBlue','',''],
+        ['','','','',''],
+        ['','','','','gemOrange'],
+        ['','','','rock',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [4, 2, 7, 'left'],
+        [1, 3, 5],
+      ],
+      exit: 1
+    },
+    level7 = {
+      playGround: [
+        ['water','water','water','water','water'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['','','','','gemBlue'],
+        ['','heart','rock','',''],
+        ['gemGreen','','','',''],
+        ['','','','rock',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [4, 1, 7, 'left'],
+        [3, 2, 3],
+        [1, 3, 7, 'left'],
+        [2, 4, 8],
+      ],
+      exit: 3
+    },
+    level8 = {
+      playGround: [
+        ['water','water','water','water','water'],
+        ['stone','stone','stone','water','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['stone','stone','stone','stone','stone'],
+        ['grass','grass','grass','water','water'],
+        ['grass','grass','grass','grass','grass']
+      ],
+      units: [
+        ['','','','',''],
+        ['gemOrange','','','',''],
+        ['','heart','rock','',''],
+        ['rock','','rock','',''],
+        ['','','','',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [1, 3, 7, 'left'],
+        [3, 2, 3],
+        [1, 1, 7, 'left'],
+      ],
+      exit: 3
+    },
+    level9 = {
+      playGround: [
+        ['water','grass','water','water','water'],
+        ['water','grass','water','water','water'],
+        ['stone','water','rockInWater','stone','stone'],
+        ['stone','stone','stone','water','water'],
+        ['grass','water','water','rockInWater','water'],
+        ['grass','water','grass','grass','water']
+      ],
+      units: [
+        ['','','','',''],
+        ['','','','',''],
+        ['','','rock','',''],
+        ['','','','',''],
+        ['','','','rock',''],
+        ['key','','','','']
+      ],
+      enemies: [
+        [1, 3, 7, 'left'],
+        [4, 2, 7]
+      ],
+      exit: 1
+    },
+    level10 = {
+      playGround: [
+        ['grass','grass','grass','grass','grass'],
+        ['grass','grass','grass','water','water'],
+        ['grass','grass','grass','grass','grass'],
+        ['grass','grass','grass','grass','water'],
+        ['water','grass','water','grass','water'],
+        ['water','grass','grass','grass','water']
+      ],
+      units: [
+        ['','rock','rock','','closedTreasure'],
+        ['','','rock','',''],
+        ['','rock','','',''],
+        ['','rock','rock','',''],
+        ['','','','',''],
+        ['','','','','']
+      ],
+      enemies: [
+        [0, 3, 7, 'left'],
+        [4, 2, 7]
+      ],
+      exit: 10
     };
-  GAME.levels = [level1, level2], GAME.canvas = document.querySelector('canvas');
+  GAME.levels = [level1, level2, level3, level4, level5, level6, level7, level8, level9, level10];
+  GAME.canvas = document.querySelector('canvas');
   GAME.ctx = GAME.canvas.getContext('2d'), GAME.blocks = [];
   GAME.money = 0, GAME.lives = 3, GAME.level = 0;
   GAME.isPaused = false, GAME.running = setInterval(runTheGame, 35);
@@ -210,7 +399,7 @@ function play(chosenPlayer) {
           }, 50);
           setTimeout(_=> {
             GAME.togglePause();
-          }, 300);
+          }, 200);
         }else if(this.class === 'rock') {
           let waterBlock = getWaterBlock(this);
           waterBlock.image = GAME.images.rockInWater;
@@ -289,7 +478,7 @@ function play(chosenPlayer) {
       updateLives(), GAME.togglePause();
       setTimeout(function() {
         GAME.player.resetPosition(), GAME.togglePause();
-      }, 300);
+      }, 200);
     }else {
       GAME.blocks.forEach(block => {
         if((block.class === 'rock' || block.class === 'water' ||
@@ -460,10 +649,10 @@ function play(chosenPlayer) {
   * @description handles loosing the game
   */
   function loseTheGame() {
-    setInterval(function() {
+    setTimeout(function() {
       clearInterval(GAME.running), showElement(GAME_DOM['game-over']);
       GAME_DOM['game-message'].innerHTML = 'You lose';
-    }, 100);
+    }, 300);
   }
   /**
   * @description Handles player's invincibility
@@ -490,11 +679,12 @@ function play(chosenPlayer) {
   */
   GAME.restart = function() {
     this.isPaused && GAME.togglePause();
-    this.money = 0, this.lives = 3, this.level = 0;
+    this.money = 0, this.lives = 3, this.level = 9;
     this.blocks.splice(0), this.createPlayGround();
     this.createUnits(), this.blocks.push(GAME.player), this.player.hasKey = false;
     this.player.isInvincible = false, this.player.class = 'player';
     this.player.image = GAME.images.player, this.player.resetPosition();
+    this.player.hasKey = true;
     GAME_DOM['player-level'].children[0].innerHTML = GAME.level + 1;
     updateMoney(), updateLives();
   };
