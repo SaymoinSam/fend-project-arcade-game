@@ -679,7 +679,7 @@ function play(chosenPlayer) {
   */
   GAME.restart = function() {
     this.isPaused && GAME.togglePause();
-    this.money = 0, this.lives = 3, this.level = 9;
+    this.money = 0, this.lives = 3, this.level = 0;
     this.blocks.splice(0), this.createPlayGround();
     this.createUnits(), this.blocks.push(GAME.player), this.player.hasKey = false;
     this.player.isInvincible = false, this.player.class = 'player';
